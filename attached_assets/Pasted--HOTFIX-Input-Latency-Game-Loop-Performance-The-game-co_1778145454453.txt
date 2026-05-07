@@ -1,0 +1,98 @@
+# HOTFIX: Input Latency & Game Loop Performance
+
+The game controls feel sluggish and unresponsive. Fix the following in order:
+
+## 1. Check Game Loop Implementation
+Open `/src/hooks/useGameLoop.ts`. Verify:
+- Uses `requestAnimationFrame` ONLY (not `setInterval` or `setTimeout`)
+- Fixed timestep accumulator pattern (accumulate deltaTime, step logic, render)
+- No state updates inside RAF loop — only read state, write to accumulator
+
+Pattern (correct):
+```typescript
+let accumulator = 0;
+const FIXED_STEP = 1000 / 60; // 16.67ms per frame
+
+const gameLoop = (timestamp: number) => {
+  accumulator += (timestamp - lastTime);
+  lastTime = timestamp;
+  
+  while (accumulator >= FIXED_STEP) {
+    // Call pure engine functions, update Zustand store ONCE per step
+    store.getState().advanceFrame();
+    accumulator -= FIXED_STEP;
+  }
+  
+  rafId = requestAnimationFrame(gameLoop);
+};
+```
+
+If using `setInterval`, `setTimeout`, or multiple `store.setState()` calls per frame → REWRITE immediately.
+
+## 2. Check Touch/Keyboard Input Buffering
+Open `/src/hooks/useTouchControls.ts` and `/src/hooks/useKeyboardControls.ts`:
+- Do NOT call game actions directly in event handlers
+- Instead: set input flags in a ref or state that the game loop reads
+- Game loop applies input commands ONCE per frame, not per event
+
+Pattern (correct):
+```typescript
+const inputRef = useRef({ moveX: 0, rotate: null, ...});
+
+const handleKeyDown = (e) => {
+  if (e.key === 'ArrowLeft') inputRef.current.moveX = -1;
+  // Do NOT call game.move() here
+};
+
+// In game loop:
+const input = inputRef.current;
+if (input.moveX !== 0) store.getState().move(input.moveX);
+inputRef.current.moveX = 0; // consume after use
+```
+
+If event handlers call `store.setState()` or game actions directly → REWRITE.
+
+## 3. Reduce Zustand Subscription Re-renders
+Open `/src/store/gameStore.ts`:
+- Selector functions must be memoized or use `shallowEqual`
+- Components must NOT subscribe to entire state if they only read one field
+
+Pattern (correct in Playfield.tsx):
+```typescript
+const board = useShallow(store((s) => s.board)); // shallow compare
+const score = store((s) => s.score); // single field, no array/object
+```
+
+If Playfield re-renders on every state change → add shallow selectors.
+
+## 4. Check Playfield Rendering Strategy
+Open `/src/components/Playfield.tsx`:
+- Count DOM nodes: should be ~200 (10×20 grid cells)
+- If count is >500 or includes per-cell listeners → performance issue
+
+If DevTools shows 200+ layout thrashes per frame → switch to Canvas:
+- Create a single `<canvas>` element
+- Draw blocks with `ctx.fillRect()` per frame
+- Input still goes through normal event listeners
+
+## 5. Measure FPS
+1. Open DevTools → Performance tab
+2. Click red Record button
+3. Play for 5 seconds
+4. Stop recording
+5. Look at "Frames" section — what's the FPS? (should be 60, sustained)
+6. If drops below 50 → report frame drops location (game loop? re-renders? collision?)
+
+## Expected Result
+After fixes:
+- Pressing arrow key → block moves immediately (no lag)
+- Swiping on mobile → piece responds instantly (<50ms)
+- FPS steady at 55–60 during play
+- No jank or stuttering
+
+## Report Back
+1. Which of #1-#4 was wrong?
+2. What was the fix?
+3. What's the FPS now (DevTools Performance)?
+
+Do NOT build anything else until input latency is fixed.
