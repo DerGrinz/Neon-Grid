@@ -1,0 +1,454 @@
+# PROJECT: NEON GRID — Mobile Tetris PWA
+
+## ROLE
+You are a senior frontend engineer building a production-ready mobile Tetris PWA. 
+You work in milestones with explicit verification gates. You do NOT proceed to 
+the next milestone until the current one is verified working.
+
+## OBJECTIVE
+Build a fully playable, mobile-first Tetris PWA using React 18 + TypeScript + 
+Vite + Tailwind. Target: iOS Safari 16+, Android Chrome. Deployable from Replit.
+
+## TECH STACK (mandatory, no substitutions)
+- React 18 + TypeScript (strict mode, no `any`)
+- Vite + vite-plugin-pwa
+- Tailwind CSS + CSS custom properties
+- Zustand for state
+- Framer Motion (UI screen transitions ONLY, never inside game loop)
+- Howler.js for audio
+- Vitest for engine unit tests
+- localStorage for persistence
+
+## REPLIT SETUP
+- Vite dev server must bind to `0.0.0.0` and read PORT from env
+- `.replit` configured for `npm run dev`
+- Add `replit.nix` only if needed
+
+---
+
+## GAME CONSTANTS (use these exact values)
+
+```typescript
+// constants.ts
+export const BOARD_W = 10;
+export const BOARD_H = 20;
+export const BOARD_BUFFER_H = 2; // hidden rows above visible board
+
+// DAS / ARR (Delayed Auto Shift / Auto Repeat Rate)
+export const DAS_MS = 167;
+export const ARR_MS = 33;
+
+// Soft drop multiplier
+export const SOFT_DROP_MULT = 20;
+
+// Gravity table (ms per row drop) — simplified Tetris guideline
+export const GRAVITY_MS: Record<number, number> = {
+  1: 1000, 2: 793, 3: 618, 4: 473, 5: 355,
+  6: 262, 7: 190, 8: 135, 9: 94, 10: 64,
+  11: 43, 12: 28, 13: 18, 14: 11, 15: 7,
+};
+// Levels 16+ use the level 15 value.
+
+// Lock delay
+export const LOCK_DELAY_MS = 500;
+export const LOCK_RESETS_MAX = 15;
+
+// Scoring
+export const SCORE = {
+  SINGLE: 100, DOUBLE: 300, TRIPLE: 500, TETRIS: 800,
+  T_SPIN_SINGLE: 800, T_SPIN_DOUBLE: 1200, T_SPIN_TRIPLE: 1600,
+  SOFT_DROP_PER_CELL: 1, HARD_DROP_PER_CELL: 2,
+} as const;
+```
+
+## TOUCH CONTROL THRESHOLDS
+
+```typescript
+const SWIPE_MIN_DISTANCE = 30;        // px
+const SWIPE_MAX_DURATION = 300;       // ms
+const TAP_MAX_DURATION = 200;         // ms
+const TAP_MAX_DISTANCE = 10;          // px
+const LONG_PRESS_MIN_DURATION = 400;  // ms
+const HORIZONTAL_BIAS = 1.5;          // |dx| / |dy| ratio
+```
+
+Conflict resolution:
+- Vertical swipe ONLY if |dy| > HORIZONTAL_BIAS × |dx|
+- Tap ONLY if total movement < TAP_MAX_DISTANCE AND duration < TAP_MAX_DURATION
+- Hold (move + auto-repeat) triggers after pointer is held stationary at edge 
+  of swipe for DAS_MS, then repeats every ARR_MS
+
+---
+
+## DESIGN SYSTEM
+
+### Color Palette (CSS variables in theme.css)
+- `--bg-deep`: #05060F
+- `--bg-grid`: #0B0E1F
+- `--neon-cyan`: #00F0FF
+- `--neon-magenta`: #FF00E5
+- `--neon-violet`: #8B00FF
+- `--neon-green`: #00FF9D
+- `--neon-yellow`: #FFD600
+- `--neon-orange`: #FF8A00
+- `--neon-blue`: #2979FF
+- `--text-primary`: #E8F4FF
+- `--text-dim`: #6B7BA8
+
+### Tetromino Colors
+- I → cyan, O → yellow, T → violet, S → green, Z → magenta, J → blue, L → orange
+- Glow: `box-shadow: 0 0 12px currentColor, 0 0 24px currentColor`
+
+### Typography
+- Headings: Orbitron, uppercase, letter-spacing 0.15em
+- HUD / numbers: Rajdhani or JetBrains Mono (monospace for digits)
+
+### Layout (mobile-first, 375–430px target)
+- Portrait locked via manifest
+- Playfield ~85% viewport width, centered
+- HUD top: Score / Level / Lines
+- Hold + Next queue: right of playfield (or below on narrow screens)
+- Bottom: optional touch button overlay (toggleable)
+
+PERFORMANCE PRIORITY (when in conflict):
+Game loop FPS > Touch responsiveness > Visual FX
+Drop chromatic aberration / screen shake / animated mesh on devices where 
+they cause frame drops below 55 FPS. Respect `prefers-reduced-motion`.
+
+---
+
+## MILESTONES (build in order, verify each before proceeding)
+
+### M1 — Project Skeleton
+Deliver: Vite + React + TS + Tailwind running, PWA plugin configured, 
+manifest valid, app icon placeholder, dev server accessible on Replit.
+
+Concrete tasks:
+1. Initialize Vite project with React + TypeScript template
+2. Install and configure Tailwind CSS (with neon CSS custom properties in theme.css)
+3. Install and configure vite-plugin-pwa with:
+   - `registerType: 'autoUpdate'`
+   - manifest with name, short_name, theme_color (#05060F), background_color, 
+     display: 'standalone', orientation: 'portrait', icons (192, 512)
+   - workbox config for offline caching of all static assets
+4. Add placeholder icons (solid neon-cyan square with "T" — replaceable later)
+5. Create minimal App.tsx showing centered "NEON GRID" text in Orbitron font 
+   on the deep-bg background, to confirm Tailwind + theme + fonts load
+6. Configure `.replit` and ensure Vite binds to `0.0.0.0` with PORT env var
+7. Add `index.html` meta tags: viewport with `viewport-fit=cover` and 
+   `user-scalable=no`, theme-color, apple-touch-icon, 
+   apple-mobile-web-app-capable
+
+Verification (do all before proceeding):
+- `npm run dev` starts and is reachable in Replit preview
+- Browser shows "NEON GRID" placeholder in correct font and colors
+- Chrome DevTools → Application → Manifest: no errors, all fields present
+- Chrome DevTools → Lighthouse → PWA audit: "Installable" check passes
+- Service worker registers (Application → Service Workers shows active worker)
+- No console errors or warnings
+
+After M1, output:
+- Summary of what was built
+- Exact commands and DevTools steps for verification
+- Then ask: "M1 verified — proceed to M2?"
+
+---
+
+### M2 — Game Engine (pure logic, no UI)
+Deliver: `/src/game/` with engine.ts, tetrominoes.ts, bag.ts, scoring.ts, 
+constants.ts. ALL functions pure and unit-tested with Vitest.
+
+Concrete tasks:
+1. `constants.ts`: export the GAME CONSTANTS block above verbatim
+2. `tetrominoes.ts`:
+   - Define all 7 pieces (I, O, T, S, Z, J, L) as 4 rotation states each, 
+     represented as 4x4 matrices (or piece-appropriate bounding box) of 0/1
+   - Export the SRS kick tables: one for J/L/S/T/Z (shared), one for I 
+     (I has its own kicks). Each transition (0→R, R→0, R→2, 2→R, 2→L, L→2, 
+     L→0, 0→L) defines an array of 5 [dx, dy] offsets to test
+   - Reference: https://tetris.wiki/Super_Rotation_System
+3. `bag.ts`:
+   - 7-bag randomizer: shuffles all 7 piece types, dispenses one at a time, 
+     refills when empty
+   - Export `createBag(rng?: () => number)` for testability with seeded RNG
+4. `scoring.ts`:
+   - `calculateLineScore(linesCleared, level, isTSpin, isMiniTSpin)` returning points
+   - T-spin detection helper using 3-corner rule:
+     A T-piece lock is a T-spin if 3+ of the 4 cells diagonally adjacent to 
+     the T's center are occupied. Mini T-spin if only 2 of the "front" 
+     corners (the two corners on the side the T is pointing) are occupied 
+     and 1 "back" corner is occupied.
+   - Soft/hard drop scoring per cell traveled
+5. `engine.ts`:
+   - Pure state-transition functions: `spawnPiece`, `tryMove(state, dx, dy)`, 
+     `tryRotate(state, direction)` (uses kick tables), `lockPiece(state)`, 
+     `clearLines(state)`, `isGameOver(state)`
+   - State shape: `{ board: Cell[][], current: ActivePiece, hold: PieceType | null, 
+     queue: PieceType[], score, level, lines, holdUsed, lockTimer, lockResets }`
+   - Functions return new state objects (no mutation)
+6. Vitest setup: `vitest.config.ts`, test files alongside source as `*.test.ts`
+
+Required test coverage:
+- 7-bag dispenses exactly one of each piece per cycle (test with 100 bags)
+- Each piece rotates correctly through all 4 states (snapshot test)
+- SRS kicks: at least one known case per piece, e.g. T-spin triple setup
+- Collision: piece against left/right wall, floor, stacked block
+- Line clear: 1, 2, 3, 4 simultaneous lines, scoring matches table × level
+- T-spin detection: T-spin single, double, triple, mini, false positive 
+  (regular T-piece lock is NOT a T-spin)
+- Gravity table values match constants
+
+Verification:
+- `npm run test` → all tests pass
+- `npm run test -- --coverage` → engine files at >85% coverage
+- No UI work in this milestone
+
+After M2, output summary + verification, then ask: 
+"M2 verified — proceed to M3?"
+
+---
+
+### M3 — Playfield Rendering
+Deliver: Static `Playfield` and `Block` components rendering a hardcoded 
+board state. No game loop yet, no interaction.
+
+Concrete tasks:
+1. `Block.tsx`: receives `{ type: PieceType | 'ghost' | null, x, y }`, 
+   renders a single cell with neon color + glow per design system
+2. `Playfield.tsx`: receives `{ board: Cell[][] }`, renders 10×20 grid using 
+   CSS grid. Glass-morphism container with neon-cyan border + outer glow
+3. Decision point: DOM-per-cell vs canvas
+   - Start with DOM-per-cell (200 elements, manageable)
+   - If DevTools Performance shows frame drops below 55 FPS during M4 game 
+     loop testing, switch to a single canvas in M3 refactor
+4. Hardcode a test board state in `App.tsx` showing: a few stacked blocks at 
+   the bottom, one active piece in the middle, one ghost piece at the bottom
+5. Background: dark with faint grid lines (CSS, low opacity, no animation yet)
+
+Verification:
+- Visual: playfield renders correctly, blocks have neon glow, dimensions 
+  match design (~85% viewport width, portrait)
+- Chrome DevTools → Performance: record 5 seconds idle, no layout thrash, 
+  steady 60 FPS baseline
+- Check on real mobile device (Chrome remote debugging or Replit URL on phone)
+- Tailwind classes only, no inline styles except for dynamic cell positions
+
+After M3 verification, ask: "M3 verified — proceed to M4?"
+
+---
+
+### M4 — Game Loop + Keyboard Controls
+Deliver: `useGameLoop` hook using requestAnimationFrame with fixed timestep 
+accumulator. Keyboard controls for desktop testing. Game is now playable 
+on desktop.
+
+Concrete tasks:
+1. `useGameLoop.ts`:
+   - Fixed timestep accumulator pattern (accumulate elapsed time, step game 
+     logic at gravity interval, render every frame)
+   - Cleanup: cancelAnimationFrame on unmount
+   - Pause/resume support
+2. Zustand `gameStore.ts`:
+   - Holds engine state, exposes actions: `move(dx)`, `rotate(dir)`, 
+     `softDrop()`, `hardDrop()`, `hold()`, `pause()`, `reset()`
+   - Subscribes game loop to advance gravity per `GRAVITY_MS[level]`
+3. `useKeyboardControls.ts`:
+   - ArrowLeft/Right → move (with DAS/ARR repeat using DAS_MS/ARR_MS)
+   - ArrowDown → soft drop (held = continuous)
+   - Space → hard drop (single press only, no repeat)
+   - ArrowUp or X → rotate CW
+   - Z → rotate CCW
+   - Shift or C → hold
+   - Esc or P → pause
+   - Cleanup all event listeners on unmount
+4. Integrate hold (1 slot, swap with current, locked until next piece spawns)
+5. Lock delay: piece on ground starts lockTimer (LOCK_DELAY_MS), resets on 
+   successful move/rotate up to LOCK_RESETS_MAX times, then locks
+
+Verification:
+- Fully playable with keyboard on desktop browser
+- Chrome DevTools → Performance: sustained 60 FPS during play
+- DAS/ARR feels right: hold left → small delay, then rapid auto-repeat
+- Hard drop locks immediately + adds correct score
+- Hold works once per piece, re-enables after lock
+- Pause stops gravity and ignores input except resume
+- Game over when piece spawns inside existing blocks → state transitions
+
+After M4 verification, ask: "M4 verified — proceed to M5?"
+
+---
+
+### M5 — Touch Controls
+Deliver: `useTouchControls` hook with explicit thresholds. Optional 
+on-screen button overlay component.
+
+Concrete tasks:
+1. `useTouchControls.ts` using Pointer Events (not Touch Events — better cross-platform):
+   - Track pointerdown timestamp, position, and current position
+   - On pointermove: if movement exceeds SWIPE_MIN_DISTANCE within 
+     SWIPE_MAX_DURATION, classify direction using HORIZONTAL_BIAS
+   - On pointerup:
+     * If tap (small movement, short duration) → rotate CW
+     * If two-finger tap (track pointer count) → rotate CCW
+     * If long press (LONG_PRESS_MIN_DURATION, low movement) → hold
+   - Horizontal swipe → single move; if pointer remains at swipe end position, 
+     trigger DAS auto-repeat
+   - Swipe up → hard drop
+   - Swipe down → soft drop (continuous while held)
+2. Conflict resolution as defined in TOUCH CONTROL THRESHOLDS section
+3. `TouchControls.tsx` button overlay:
+   - 6 buttons at bottom: ←, →, ↓, Rotate CW, Hold, Hard Drop
+   - Toggleable via settings (default: off, swipe is primary)
+   - When visible, takes ~120px bottom strip; playfield resizes accordingly
+4. Apply `touch-action: none` to game container, `user-select: none` globally
+5. Add `navigator.vibrate` calls (feature-detected) for: piece lock (10ms), 
+   line clear (20ms), tetris (50ms), game over (100ms)
+
+Verification:
+- Test on real iPhone (Safari) AND Android (Chrome) — both must work
+- All 6 gestures trigger correct action with no false positives during 5-min 
+  play session
+- No accidental scrolling, no zoom, no text selection
+- Toggle button overlay on/off works
+- Vibration works on Android (silently fails on iOS, no errors)
+
+After M5 verification, ask: "M5 verified — proceed to M6?"
+
+---
+
+### M6 — HUD, Hold, Next Queue, Ghost Piece
+Deliver: All in-game UI elements. Game is feature-complete except for 
+screens/audio/FX.
+
+Concrete tasks:
+1. `HUD.tsx`: top bar with Score, Level, Lines (monospace digits, 
+   neon-cyan accent), pause button (top-right)
+2. `HoldSlot.tsx`: shows held piece (or empty), dimmed when hold is locked
+3. `NextQueue.tsx`: shows next 3 pieces from queue, smaller scale
+4. Ghost piece: render in playfield at the position where current piece would 
+   land (semi-transparent, no glow, dashed outline)
+5. `PauseOverlay.tsx`: full-screen translucent overlay with Resume / 
+   Restart / Quit to Menu (Quit to Menu is no-op until M7)
+6. Layout responsive: on screens <400px wide, Hold and Next stack below 
+   playfield; on wider, they sit to the right
+
+Verification:
+- All HUD values update in real time during play
+- Ghost piece updates instantly on every move/rotate
+- Hold slot dims when used, re-brightens after next piece locks
+- Next queue shows correct upcoming pieces (matches engine queue)
+- Pause overlay covers playfield, blocks input, resumes correctly
+- Layout works at 375px and 430px widths
+
+After M6 verification, ask: "M6 verified — proceed to M7?"
+
+---
+
+### M7 — Screens, Audio, FX, Polish
+Deliver: Full app flow with all screens, sound effects, visual effects.
+
+Concrete tasks:
+1. Screen routing (use simple state-based routing in Zustand, no react-router):
+   - `MenuScreen.tsx`: animated logo, PLAY / HIGH SCORES / SETTINGS / HOW TO PLAY
+   - `GameScreen.tsx`: existing game (M3-M6)
+   - `GameOverScreen.tsx`: final stats, "NEW HIGH SCORE!" with name input if 
+     applicable, PLAY AGAIN / MAIN MENU
+   - `HighScoresScreen.tsx`: top 10 from localStorage
+   - `SettingsScreen.tsx`: toggles for Sound, Music, Vibration, Touch button overlay; 
+     "Reset high scores" button (with confirmation)
+2. Framer Motion screen transitions: fade + slight scale, 200ms
+3. `settingsStore.ts` (Zustand) persisted to localStorage
+4. High scores: array of `{ name, score, lines, level, date }`, top 10, 
+   persisted to localStorage
+5. Audio with Howler.js:
+   - SFX: move (subtle), rotate, soft drop, hard drop, lock, line clear, 
+     tetris (more impactful), level up, game over
+   - Optional background music (low volume, looped)
+   - CRITICAL: Initialize Howler ONLY after user taps PLAY on menu (iOS requirement)
+6. Visual effects:
+   - Line clear: white-to-color flash + horizontal scan-line wipe before collapse
+   - Tetris clear: chromatic aberration flash + subtle screen shake (CSS transform)
+   - Block lock: brief glow pulse
+   - Background: animated gradient mesh + slow-moving grid lines (low opacity)
+   - All FX respect `prefers-reduced-motion` and PERFORMANCE PRIORITY rule
+
+Verification:
+- Full flow: Menu → Game → Game Over → High Score entry → Menu (works without reload)
+- Settings persist across reloads
+- High scores persist across reloads, top 10 sorted correctly
+- All sounds play, mute toggle works
+- iOS: audio starts on PLAY tap, no audio errors in console
+- FX visible but don't drop FPS below 55 on mid-range device
+- `prefers-reduced-motion: reduce` in DevTools → FX disabled
+
+After M7 verification, ask: "M7 verified — proceed to M8?"
+
+---
+
+### M8 — PWA + iOS Hardening
+Deliver: Production-ready PWA, installable and stable on iOS Safari and 
+Android Chrome.
+
+Concrete tasks:
+1. Replace placeholder icons with final neon "T" logo (512x512, 192x192, 
+   180x180 apple-touch-icon, maskable variants)
+2. Verify manifest:
+   - `display: standalone`, `orientation: portrait`
+   - `theme_color`, `background_color` set to deep-bg
+   - All icon sizes referenced and present
+   - `start_url` correct
+3. iOS-specific meta tags in `index.html`:
+   - `<meta name="apple-mobile-web-app-capable" content="yes">`
+   - `<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">`
+   - `<meta name="apple-mobile-web-app-title" content="NEON GRID">`
+   - `<link rel="apple-touch-icon" href="...">`
+4. Layout fixes:
+   - Replace all `100vh` with `100dvh` (dynamic viewport)
+   - Use `env(safe-area-inset-top/bottom/left/right)` for padding on game 
+     screen, menu, overlays
+   - Test with iPhone notch/Dynamic Island simulator
+5. Audio hardening:
+   - Confirm Howler init is gated behind user gesture
+   - Wrap all `navigator.vibrate` in `if ('vibrate' in navigator)` checks
+6. Service worker:
+   - Caches all static assets for offline play
+   - Skip waiting + clients claim on update for prompt updates
+7. README.md:
+   - How to run locally (`npm install`, `npm run dev`)
+   - How to deploy on Replit
+   - Controls reference (touch + keyboard)
+   - Known limitations (e.g. iOS no vibration, no background audio when 
+     screen locked)
+   - Test matrix: tested on iOS X, Android Y
+
+Verification:
+- Lighthouse PWA audit: all checks pass, score 100
+- Install on real iPhone: launches in standalone, no Safari chrome, 
+  status bar correct color, safe areas respected
+- Install on real Android: launches in standalone, theme color in task switcher
+- Offline: kill network in DevTools → app still loads and is playable
+- Audio works on first PLAY tap on iOS (most common iOS bug)
+- No console errors on either platform during full play session
+- README is complete and accurate
+
+After M8 verification, output: "M8 verified — project complete. Deployment 
+checklist: [list any final manual steps]."
+
+---
+
+## DO NOT
+- Skip any verification step
+- Build multiple milestones in a single response
+- Use `setInterval` or `setTimeout` for the game loop (RAF only)
+- Use `any` type anywhere — use `unknown` + narrowing if truly unknown
+- Initialize audio before user gesture (iOS will block it)
+- Use Framer Motion inside the game loop or for block animations 
+  (CSS transforms or canvas only)
+- Use `position: fixed` with `100vh` (use `100dvh` + safe-area-insets)
+- Catch and silently swallow errors — let them surface in dev
+- Render each cell with one DOM node if FPS suffers — switch to canvas
+
+## START
+Begin with M1 only. Complete all 7 tasks in M1, then run all 6 verification 
+checks and report results. Stop and wait for confirmation before continuing 
+to M2.
