@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Dimensions, PanResponder, Platform, StyleSheet, View } from 'react-native';
+import { Dimensions, PanResponder, Platform, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import {
@@ -140,6 +140,8 @@ export default function GameScreen({ onGameOver, onMenu }: GameScreenProps) {
     <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       <HUD onPause={pauseGame} />
 
+      <Text style={styles.headline}>NEON GRID</Text>
+
       <View style={styles.gameArea} {...panResponder.panHandlers}>
         <View style={styles.sidebar}>
           <HoldSlot />
@@ -167,6 +169,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F0F2F5',
+  },
+  headline: {
+    fontFamily: 'Orbitron_700Bold',
+    fontSize: 18,
+    color: '#0090A0',
+    letterSpacing: 6,
+    textAlign: 'center',
+    marginBottom: 4,
   },
   gameArea: {
     flex: 1,
