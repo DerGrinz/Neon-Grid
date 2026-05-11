@@ -33,24 +33,24 @@ export default function MenuScreen({ onPlay, onHighScores, onSettings }: MenuScr
     <View style={[styles.container, { paddingTop: insets.top + 40, paddingBottom: insets.bottom + 24 }]}>
       <View style={styles.logoArea}>
         <Animated.View style={[styles.tetroRow, { transform: [{ translateY: floatAnim }] }]}>
-          <MiniBlock color="#00F0FF" />
-          <MiniBlock color="#00F0FF" />
-          <MiniBlock color="#00F0FF" />
-          <MiniBlock color="#00F0FF" />
+          <MiniBlock color="#0090A0" />
+          <MiniBlock color="#0090A0" />
+          <MiniBlock color="#0090A0" />
+          <MiniBlock color="#0090A0" />
         </Animated.View>
         <Animated.Text style={[styles.title, { opacity: glowAnim }]}>
           NEON
         </Animated.Text>
         <Text style={styles.titleSub}>GRID</Text>
         <View style={styles.tetroRow2}>
-          <MiniBlock color="#8B00FF" />
-          <MiniBlock color="#8B00FF" />
-          <MiniBlock color="#8B00FF" />
+          <MiniBlock color="#7000CC" />
+          <MiniBlock color="#7000CC" />
+          <MiniBlock color="#7000CC" />
           <View style={styles.miniBlockGap} />
-          <MiniBlock color="#FF00E5" />
-          <MiniBlock color="#FF00E5" />
+          <MiniBlock color="#D000B8" />
+          <MiniBlock color="#D000B8" />
           <View style={styles.miniBlockGap} />
-          <MiniBlock color="#FFD600" />
+          <MiniBlock color="#C8A800" />
         </View>
       </View>
 
@@ -109,7 +109,7 @@ function ControlRow({ icon, label }: { icon: string; label: string }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#05060F',
+    backgroundColor: '#F0F2F5',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 24,
@@ -139,18 +139,18 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: 'Orbitron_700Bold',
     fontSize: 52,
-    color: '#00F0FF',
+    color: '#0090A0',
     letterSpacing: 10,
-    textShadowColor: '#00F0FF',
+    textShadowColor: '#0090A0',
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 24,
   },
   titleSub: {
     fontFamily: 'Orbitron_700Bold',
     fontSize: 32,
-    color: '#8B00FF',
+    color: '#7000CC',
     letterSpacing: 20,
-    textShadowColor: '#8B00FF',
+    textShadowColor: '#7000CC',
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 16,
   },
@@ -160,25 +160,25 @@ const styles = StyleSheet.create({
   },
   btn: {
     borderWidth: 1,
-    borderColor: '#1a1f3a',
+    borderColor: '#D0D5DD',
     borderRadius: 4,
     paddingVertical: 16,
     alignItems: 'center',
-    backgroundColor: '#0B0E1F',
+    backgroundColor: '#FFFFFF',
   },
   btnPrimary: {
-    borderColor: '#00F0FF',
-    backgroundColor: 'rgba(0, 240, 255, 0.08)',
+    borderColor: '#0090A0',
+    backgroundColor: 'rgba(0, 144, 160, 0.08)',
   },
   btnText: {
     fontFamily: 'Orbitron_700Bold',
     fontSize: 13,
-    color: '#6B7BA8',
+    color: '#5A6478',
     letterSpacing: 2,
   },
   btnTextPrimary: {
-    color: '#00F0FF',
-    textShadowColor: '#00F0FF',
+    color: '#0090A0',
+    textShadowColor: '#0090A0',
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 8,
   },
@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
   controlsTitle: {
     fontFamily: 'Orbitron_700Bold',
     fontSize: 9,
-    color: '#6B7BA8',
+    color: '#5A6478',
     letterSpacing: 2,
     textAlign: 'center',
   },
@@ -204,6 +204,6 @@ const styles = StyleSheet.create({
   controlLabel: {
     fontFamily: 'Rajdhani_600SemiBold',
     fontSize: 13,
-    color: '#6B7BA8',
+    color: '#5A6478',
   },
 });

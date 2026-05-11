@@ -49,15 +49,15 @@ const styles = StyleSheet.create({
   label: {
     fontFamily: 'Orbitron_700Bold',
     fontSize: 8,
-    color: '#6B7BA8',
+    color: '#5A6478',
     letterSpacing: 1.5,
   },
   pieceBox: {
     width: 44,
     height: 36,
-    backgroundColor: '#0B0E1F',
+    backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#1a1f3a',
+    borderColor: '#D0D5DD',
     borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',

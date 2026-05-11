@@ -70,8 +70,8 @@ function ToggleRow({ label, value, onChange }: { label: string; value: boolean; 
       <Switch
         value={value}
         onValueChange={onChange}
-        trackColor={{ false: '#1a1f3a', true: 'rgba(0, 240, 255, 0.3)' }}
-        thumbColor={value ? '#00F0FF' : '#6B7BA8'}
+        trackColor={{ false: '#D0D5DD', true: 'rgba(0, 144, 160, 0.3)' }}
+        thumbColor={value ? '#0090A0' : '#5A6478'}
       />
     </View>
   );
@@ -80,7 +80,7 @@ function ToggleRow({ label, value, onChange }: { label: string; value: boolean; 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#05060F',
+    backgroundColor: '#F0F2F5',
     paddingHorizontal: 16,
   },
   header: {
@@ -95,13 +95,13 @@ const styles = StyleSheet.create({
   backText: {
     fontFamily: 'Orbitron_700Bold',
     fontSize: 10,
-    color: '#6B7BA8',
+    color: '#5A6478',
     letterSpacing: 1,
   },
   title: {
     fontFamily: 'Orbitron_700Bold',
     fontSize: 14,
-    color: '#00F0FF',
+    color: '#0090A0',
     letterSpacing: 3,
   },
   section: {
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontFamily: 'Orbitron_700Bold',
     fontSize: 9,
-    color: '#6B7BA8',
+    color: '#5A6478',
     letterSpacing: 2,
     marginBottom: 4,
   },
@@ -119,9 +119,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#0B0E1F',
+    backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#1a1f3a',
+    borderColor: '#D0D5DD',
     borderRadius: 6,
     paddingHorizontal: 16,
     paddingVertical: 12,
@@ -129,11 +129,11 @@ const styles = StyleSheet.create({
   toggleLabel: {
     fontFamily: 'Rajdhani_600SemiBold',
     fontSize: 15,
-    color: '#E8F4FF',
+    color: '#1A1A2E',
   },
   dangerBtn: {
     borderWidth: 1,
-    borderColor: '#FF00E5',
+    borderColor: '#D000B8',
     borderRadius: 6,
     paddingVertical: 14,
     alignItems: 'center',
@@ -142,20 +142,20 @@ const styles = StyleSheet.create({
   dangerText: {
     fontFamily: 'Orbitron_700Bold',
     fontSize: 12,
-    color: '#FF00E5',
+    color: '#D000B8',
     letterSpacing: 2,
   },
   footer: {
     marginTop: 'auto',
     gap: 4,
     borderTopWidth: 1,
-    borderTopColor: '#1a1f3a',
+    borderTopColor: '#D0D5DD',
     paddingTop: 20,
   },
   footerText: {
     fontFamily: 'Rajdhani_600SemiBold',
     fontSize: 12,
-    color: '#1a1f3a',
+    color: '#D0D5DD',
     letterSpacing: 1,
   },
 });

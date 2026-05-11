@@ -44,9 +44,9 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: 'Orbitron_700Bold',
     fontSize: 32,
-    color: '#00F0FF',
+    color: '#0090A0',
     letterSpacing: 6,
-    textShadowColor: '#00F0FF',
+    textShadowColor: '#0090A0',
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 20,
   },
@@ -56,23 +56,23 @@ const styles = StyleSheet.create({
   },
   btn: {
     borderWidth: 1,
-    borderColor: '#1a1f3a',
+    borderColor: '#D0D5DD',
     borderRadius: 4,
     paddingVertical: 14,
     alignItems: 'center',
-    backgroundColor: '#0B0E1F',
+    backgroundColor: '#FFFFFF',
   },
   btnPrimary: {
-    borderColor: '#00F0FF',
-    backgroundColor: 'rgba(0, 240, 255, 0.1)',
+    borderColor: '#0090A0',
+    backgroundColor: 'rgba(0, 144, 160, 0.1)',
   },
   btnText: {
     fontFamily: 'Orbitron_700Bold',
     fontSize: 13,
-    color: '#6B7BA8',
+    color: '#5A6478',
     letterSpacing: 2,
   },
   btnTextPrimary: {
-    color: '#00F0FF',
+    color: '#0090A0',
   },
 });

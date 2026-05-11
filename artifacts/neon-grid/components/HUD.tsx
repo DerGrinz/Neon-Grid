@@ -51,13 +51,13 @@ const styles = StyleSheet.create({
   statLabel: {
     fontFamily: 'Orbitron_700Bold',
     fontSize: 9,
-    color: '#6B7BA8',
+    color: '#5A6478',
     letterSpacing: 1.5,
   },
   statValue: {
     fontFamily: 'Rajdhani_700Bold',
     fontSize: 20,
-    color: '#00F0FF',
+    color: '#0090A0',
     letterSpacing: 1,
   },
   pauseBtn: {
@@ -66,11 +66,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#1a1f3a',
+    borderColor: '#D0D5DD',
     borderRadius: 18,
   },
   pauseIcon: {
     fontSize: 16,
-    color: '#6B7BA8',
+    color: '#5A6478',
   },
 });

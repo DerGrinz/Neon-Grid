@@ -61,12 +61,12 @@ export default function Playfield({ cellSize }: PlayfieldProps) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#0B0E1F',
+    backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#00F0FF',
+    borderColor: '#0090A0',
     borderRadius: 2,
     overflow: 'hidden',
-    shadowColor: '#00F0FF',
+    shadowColor: '#0090A0',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.6,
     shadowRadius: 12,

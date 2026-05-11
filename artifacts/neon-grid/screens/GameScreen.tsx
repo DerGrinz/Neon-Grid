@@ -166,7 +166,7 @@ export default function GameScreen({ onGameOver, onMenu }: GameScreenProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#05060F',
+    backgroundColor: '#F0F2F5',
   },
   gameArea: {
     flex: 1,

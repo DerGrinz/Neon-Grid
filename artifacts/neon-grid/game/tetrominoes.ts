@@ -46,13 +46,13 @@ export const PIECES: Record<PieceType, [number, number][][]> = {
 };
 
 export const PIECE_COLORS: Record<PieceType, string> = {
-  I: '#00F0FF',
-  O: '#FFD600',
-  T: '#8B00FF',
-  S: '#00FF9D',
-  Z: '#FF00E5',
-  J: '#2979FF',
-  L: '#FF8A00',
+  I: '#0090A0',
+  O: '#C8A800',
+  T: '#7000CC',
+  S: '#00B870',
+  Z: '#D000B8',
+  J: '#1A60CC',
+  L: '#D07000',
 };
 
 export const ALL_PIECES: PieceType[] = ['I', 'O', 'T', 'S', 'Z', 'J', 'L'];

@@ -7,7 +7,7 @@ interface HighScoresScreenProps {
   onBack: () => void;
 }
 
-const RANK_COLORS = ['#FFD600', '#E8F4FF', '#FF8A00'];
+const RANK_COLORS = ['#C8A800', '#8090A0', '#D07000'];
 
 export default function HighScoresScreen({ onBack }: HighScoresScreenProps) {
   const insets = useSafeAreaInsets();
@@ -32,7 +32,7 @@ export default function HighScoresScreen({ onBack }: HighScoresScreenProps) {
         ) : (
           highScores.map((entry, i) => (
             <View key={i} style={[styles.row, i === 0 && styles.rowFirst]}>
-              <Text style={[styles.rank, { color: RANK_COLORS[i] ?? '#6B7BA8' }]}>
+              <Text style={[styles.rank, { color: RANK_COLORS[i] ?? '#5A6478' }]}>
                 #{i + 1}
               </Text>
               <View style={styles.rowInfo}>
@@ -56,7 +56,7 @@ export default function HighScoresScreen({ onBack }: HighScoresScreenProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#05060F',
+    backgroundColor: '#F0F2F5',
   },
   header: {
     flexDirection: 'row',
@@ -71,13 +71,13 @@ const styles = StyleSheet.create({
   backText: {
     fontFamily: 'Orbitron_700Bold',
     fontSize: 10,
-    color: '#6B7BA8',
+    color: '#5A6478',
     letterSpacing: 1,
   },
   title: {
     fontFamily: 'Orbitron_700Bold',
     fontSize: 14,
-    color: '#00F0FF',
+    color: '#0090A0',
     letterSpacing: 3,
   },
   scroll: {
@@ -95,27 +95,27 @@ const styles = StyleSheet.create({
   emptyText: {
     fontFamily: 'Orbitron_700Bold',
     fontSize: 14,
-    color: '#6B7BA8',
+    color: '#5A6478',
     letterSpacing: 2,
   },
   emptySubText: {
     fontFamily: 'Rajdhani_600SemiBold',
     fontSize: 14,
-    color: '#1a1f3a',
+    color: '#D0D5DD',
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#0B0E1F',
+    backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#1a1f3a',
+    borderColor: '#D0D5DD',
     borderRadius: 6,
     paddingHorizontal: 14,
     paddingVertical: 12,
     gap: 12,
   },
   rowFirst: {
-    borderColor: '#FFD600',
+    borderColor: '#C8A800',
     backgroundColor: 'rgba(255, 214, 0, 0.04)',
   },
   rank: {
@@ -130,13 +130,13 @@ const styles = StyleSheet.create({
   name: {
     fontFamily: 'Rajdhani_700Bold',
     fontSize: 16,
-    color: '#E8F4FF',
+    color: '#1A1A2E',
     letterSpacing: 1,
   },
   date: {
     fontFamily: 'Rajdhani_600SemiBold',
     fontSize: 11,
-    color: '#6B7BA8',
+    color: '#5A6478',
   },
   rowScore: {
     alignItems: 'flex-end',
@@ -145,17 +145,17 @@ const styles = StyleSheet.create({
   score: {
     fontFamily: 'Rajdhani_700Bold',
     fontSize: 18,
-    color: '#E8F4FF',
+    color: '#1A1A2E',
   },
   scoreFirst: {
-    color: '#FFD600',
-    textShadowColor: '#FFD600',
+    color: '#C8A800',
+    textShadowColor: '#C8A800',
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 8,
   },
   lines: {
     fontFamily: 'Rajdhani_600SemiBold',
     fontSize: 11,
-    color: '#6B7BA8',
+    color: '#5A6478',
   },
 });

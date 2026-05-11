@@ -51,7 +51,7 @@ export default function GameOverScreen({ score, lines, level, onPlayAgain, onMen
             maxLength={12}
             autoCapitalize="characters"
             placeholder="PLAYER"
-            placeholderTextColor="#1a1f3a"
+            placeholderTextColor="#D0D5DD"
             autoFocus
           />
           <TouchableOpacity
@@ -89,7 +89,7 @@ function StatRow({ label, value, highlight }: { label: string; value: string; hi
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#05060F',
+    backgroundColor: '#F0F2F5',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 24,
@@ -101,26 +101,26 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: 'Orbitron_700Bold',
     fontSize: 28,
-    color: '#FF00E5',
+    color: '#D000B8',
     letterSpacing: 4,
-    textShadowColor: '#FF00E5',
+    textShadowColor: '#D000B8',
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 16,
   },
   newHighScore: {
     fontFamily: 'Orbitron_700Bold',
     fontSize: 11,
-    color: '#FFD600',
+    color: '#C8A800',
     letterSpacing: 3,
-    textShadowColor: '#FFD600',
+    textShadowColor: '#C8A800',
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 8,
   },
   statsCard: {
     width: '100%',
-    backgroundColor: '#0B0E1F',
+    backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#1a1f3a',
+    borderColor: '#D0D5DD',
     borderRadius: 8,
     padding: 20,
     gap: 12,
@@ -133,23 +133,23 @@ const styles = StyleSheet.create({
   statLabel: {
     fontFamily: 'Orbitron_700Bold',
     fontSize: 10,
-    color: '#6B7BA8',
+    color: '#5A6478',
     letterSpacing: 2,
   },
   statValue: {
     fontFamily: 'Rajdhani_700Bold',
     fontSize: 24,
-    color: '#E8F4FF',
+    color: '#1A1A2E',
   },
   statValueHighlight: {
-    color: '#00F0FF',
-    textShadowColor: '#00F0FF',
+    color: '#0090A0',
+    textShadowColor: '#0090A0',
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 10,
   },
   divider: {
     height: 1,
-    backgroundColor: '#1a1f3a',
+    backgroundColor: '#D0D5DD',
   },
   nameEntry: {
     width: '100%',
@@ -158,26 +158,26 @@ const styles = StyleSheet.create({
   nameLabel: {
     fontFamily: 'Orbitron_700Bold',
     fontSize: 9,
-    color: '#FFD600',
+    color: '#C8A800',
     letterSpacing: 2,
     textAlign: 'center',
   },
   nameInput: {
     borderWidth: 1,
-    borderColor: '#FFD600',
+    borderColor: '#C8A800',
     borderRadius: 4,
     paddingVertical: 12,
     paddingHorizontal: 16,
     fontFamily: 'Rajdhani_700Bold',
     fontSize: 20,
-    color: '#E8F4FF',
-    backgroundColor: '#0B0E1F',
+    color: '#1A1A2E',
+    backgroundColor: '#FFFFFF',
     textAlign: 'center',
     letterSpacing: 3,
   },
   saveBtn: {
     borderWidth: 1,
-    borderColor: '#FFD600',
+    borderColor: '#C8A800',
     borderRadius: 4,
     paddingVertical: 14,
     alignItems: 'center',
@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
   saveBtnText: {
     fontFamily: 'Orbitron_700Bold',
     fontSize: 12,
-    color: '#FFD600',
+    color: '#C8A800',
     letterSpacing: 2,
   },
   buttons: {
@@ -198,30 +198,30 @@ const styles = StyleSheet.create({
   },
   btnPrimary: {
     borderWidth: 1,
-    borderColor: '#00F0FF',
+    borderColor: '#0090A0',
     borderRadius: 4,
     paddingVertical: 16,
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 240, 255, 0.08)',
+    backgroundColor: 'rgba(0, 144, 160, 0.08)',
   },
   btn: {
     borderWidth: 1,
-    borderColor: '#1a1f3a',
+    borderColor: '#D0D5DD',
     borderRadius: 4,
     paddingVertical: 16,
     alignItems: 'center',
-    backgroundColor: '#0B0E1F',
+    backgroundColor: '#FFFFFF',
   },
   btnTextPrimary: {
     fontFamily: 'Orbitron_700Bold',
     fontSize: 13,
-    color: '#00F0FF',
+    color: '#0090A0',
     letterSpacing: 2,
   },
   btnText: {
     fontFamily: 'Orbitron_700Bold',
     fontSize: 13,
-    color: '#6B7BA8',
+    color: '#5A6478',
     letterSpacing: 2,
   },
 });

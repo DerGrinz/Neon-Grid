@@ -13,7 +13,7 @@ export default function Block({ type, size }: BlockProps) {
   }
 
   const color = type === 'ghost'
-    ? '#6B7BA8'
+    ? '#5A6478'
     : PIECE_COLORS[type as PieceType];
 
   if (type === 'ghost') {
